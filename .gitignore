@@ -1,0 +1,4 @@
+**/__pycache__/
+# Dataset
+data_centralized/
+data_federated/
