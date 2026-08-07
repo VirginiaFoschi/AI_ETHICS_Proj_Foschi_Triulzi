@@ -1,0 +1,10 @@
+{"round": 1, "n_clients": 7, "mean_loss": 1983.2122628348213, "variance": 3655857.5833040276, "worst_client_loss": 6102.37646484375, "best_client_loss": 674.0880126953125, "jain_index": 0.5182681326711001}
+{"round": 2, "n_clients": 7, "mean_loss": 1839.6137869698662, "variance": 3351899.1924810954, "worst_client_loss": 5798.1572265625, "best_client_loss": 601.0582885742188, "jain_index": 0.5023960301792987}
+{"round": 3, "n_clients": 7, "mean_loss": 1789.81392124721, "variance": 3210419.095980366, "worst_client_loss": 5661.4521484375, "best_client_loss": 576.500732421875, "jain_index": 0.49945545810574604}
+{"round": 4, "n_clients": 7, "mean_loss": 1757.475306919643, "variance": 3089169.8101586555, "worst_client_loss": 5549.46337890625, "best_client_loss": 564.73876953125, "jain_index": 0.49996355100366197}
+{"round": 5, "n_clients": 7, "mean_loss": 1733.2219412667412, "variance": 2962130.3813422257, "worst_client_loss": 5439.10595703125, "best_client_loss": 562.0404663085938, "jain_index": 0.5035137940318238}
+{"round": 6, "n_clients": 7, "mean_loss": 1714.6329345703125, "variance": 2862033.2197054955, "worst_client_loss": 5341.033203125, "best_client_loss": 559.5608520507812, "jain_index": 0.5067160366891819}
+{"round": 7, "n_clients": 7, "mean_loss": 1701.3124389648438, "variance": 2802607.6524324226, "worst_client_loss": 5287.1318359375, "best_client_loss": 556.9703369140625, "jain_index": 0.5080617173090486}
+{"round": 8, "n_clients": 7, "mean_loss": 1692.2339390345983, "variance": 2768374.8339352594, "worst_client_loss": 5258.4931640625, "best_client_loss": 555.18212890625, "jain_index": 0.5084588382321796}
+{"round": 9, "n_clients": 7, "mean_loss": 1684.433794294085, "variance": 2739907.3787061363, "worst_client_loss": 5228.11328125, "best_client_loss": 551.6744995117188, "jain_index": 0.5087328228539691}
+{"round": 10, "n_clients": 7, "mean_loss": 1674.7387433733259, "variance": 2693739.5917576184, "worst_client_loss": 5188.2578125, "best_client_loss": 550.9091186523438, "jain_index": 0.5100946148757024}

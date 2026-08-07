@@ -165,6 +165,7 @@ def train(msg: Message, context: Context) -> Message:
                 {
                     # Used for weighted averaging on the server (FedAvg)
                     "num-examples": int(adata_local_train.n_obs),
+                    "client_id": int(client_id)
                 }
             ),
         }
