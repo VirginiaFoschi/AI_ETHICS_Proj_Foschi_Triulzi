@@ -19,9 +19,12 @@ serverapp = "app.server_app:app"
 clientapp = "app.client_app:app"
 
 [tool.flwr.app.config]
+strategy = "privacy"
+dp_noise_multiplier = 1
+dp_clip_norm = 1.0
 
 # Main simulation parameters
-num_rounds = 10
+num_rounds =100
 num_local_epochs = 3
 
 early_stopping_patience = 3
@@ -68,10 +71,10 @@ reconstruction_threshold = 2
 # Docs: https://flower.ai/docs/framework/ref-flower-configuration.html
 #######################################################################
 
-# [tool.flwr.federations]
-# default = "local-simulation"
-# [tool.flwr.federations.local-simulation]
-# options.num-supernodes = 7  # Number of clients in the simulation
+[tool.flwr.federations]
+default = "local-simulation"
+[tool.flwr.federations.local-simulation]
+options.num-supernodes = 7  # Number of clients in the simulation
 
 # # These settings are for setting the live federated training done as a final exercise
 # [tool.flwr.federations.local-deployment]

@@ -11,6 +11,7 @@ from app.custom_strategy import (
     FedAvgSaveModelPlotLosses,
     FedAvgSaveModelPlotLossesEarlyStopping,
     EarlyStopException,
+    FedAvgSaveClientUpdates
 )
 from app.task import (
     create_dummy_adata_from_hvg,
@@ -67,7 +68,7 @@ def main(grid: Grid, context: Context) -> None:
     # 3. Strategy selection: uncomment exactly one strategy to run
     # ============================================================
 
-    # Utility function for saving model (for strategies 1-3)
+    # Utility function for saving model 
     on_final = make_on_final_arrays(
         model=scvi_model,
         set_weights=set_weights,
@@ -96,15 +97,15 @@ def main(grid: Grid, context: Context) -> None:
 
     # # Strategy 2: FedAvg + train/valid loss plot 
     # #   - tracks train and validation losses
-    strategy = FedAvgSaveModelPlotLosses(
-        num_rounds=num_rounds,
-        on_final_arrays=on_final,
-        fraction_train=1.0,
-        fraction_evaluate=1.0,
-        weighted_by_key="num-examples",
-        loss_history_path=None,
-        loss_plot_path=loss_plot_path,
-    )
+    # strategy = FedAvgSaveModelPlotLosses(
+    #     num_rounds=num_rounds,
+    #     on_final_arrays=on_final,
+    #     fraction_train=1.0,
+    #     fraction_evaluate=1.0,
+    #     weighted_by_key="num-examples",
+    #     loss_history_path=None,
+    #     loss_plot_path=loss_plot_path,
+    # )
 
     # # Strategy 3: FedAvg + train/valid loss plot + early stopping
     # #   - tracks train and validation losses
@@ -120,6 +121,20 @@ def main(grid: Grid, context: Context) -> None:
     #     early_stopping_patience=early_stopping_patience,
     #     early_stopping_min_delta=early_stopping_min_delta,
     # )
+    
+    strategy_name = context.run_config.get("strategy", "baseline")
+    if strategy_name == "privacy":
+        strategy = FedAvgSaveClientUpdates(
+            num_rounds=num_rounds,         
+            on_final_arrays=on_final,
+            fraction_train=1.0,
+            fraction_evaluate=1.0,
+            weighted_by_key="num-examples",
+            loss_history_path=None,
+            loss_plot_path=loss_plot_path,
+            early_stopping_patience=15, #5
+            early_stopping_min_delta=1.0,
+        )
 
 
     # ============================================================

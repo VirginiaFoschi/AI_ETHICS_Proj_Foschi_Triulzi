@@ -7,6 +7,7 @@ from pathlib import Path
 # Third-party libraries
 import anndata
 import torch
+import numpy as np
 
 # Flower Message API imports
 from flwr.app import ArrayRecord, Context, Message, MetricRecord, RecordDict
@@ -30,6 +31,36 @@ torch.set_float32_matmul_precision("high")
 # Create the Flower client application
 app = ClientApp()
 
+# ---------------------------------------------------------------------
+# Differential privacy helper (used only when strategy == "privacy")
+# ---------------------------------------------------------------------
+
+def add_dp_noise(weights, noise_multiplier, clip_norm):
+    """Clip each layer's norm, then add calibrated Gaussian noise."""
+    clipped = []
+    for w in weights:
+        norm = np.linalg.norm(w)
+        factor = min(1.0, clip_norm / (norm + 1e-8))
+        clipped.append(w * factor)
+
+    noisy = [
+        w + np.random.normal(0, noise_multiplier * clip_norm, w.shape)
+        for w in clipped
+    ]
+    return noisy
+
+def add_dp_noise_targeted(weights, noise_multiplier, clip_norm, target_layers):
+    result = []
+    for i, w in enumerate(weights):
+        if i in target_layers:
+            norm = np.linalg.norm(w)
+            factor = min(1.0, clip_norm / (norm + 1e-8))
+            w_clipped = w * factor
+            w_noisy = w_clipped + np.random.normal(0, noise_multiplier * clip_norm, w.shape)
+            result.append(w_noisy)
+        else:
+            result.append(w)  # invariato
+    return result
 
 # ---------------------------------------------------------------------
 # Helper function: load local client state
@@ -155,6 +186,16 @@ def train(msg: Message, context: Context) -> Message:
     # Extract updated model weights after local training
     updated_weights = get_weights(scvi_model)
 
+    # Apply differential privacy only for the "privacy" strategy
+    strategy_name = context.run_config.get("strategy", "baseline")
+    if strategy_name == "privacy":
+        noise_multiplier = float(context.run_config.get("dp_noise_multiplier", 0.0))
+        print("USING NOISE ", noise_multiplier)
+        clip_norm = float(context.run_config.get("dp_clip_norm", 1.0))
+        if noise_multiplier > 0.0:
+            #updated_weights = add_dp_noise(updated_weights, noise_multiplier, clip_norm)
+            updated_weights = add_dp_noise_targeted(updated_weights, noise_multiplier, clip_norm, target_layers=[6, 18, 24])
+
     # Prepare reply to server
     content = RecordDict(
         {
@@ -165,6 +206,7 @@ def train(msg: Message, context: Context) -> Message:
                 {
                     # Used for weighted averaging on the server (FedAvg)
                     "num-examples": int(adata_local_train.n_obs),
+                    "client_id": int(client_id),
                 }
             ),
         }

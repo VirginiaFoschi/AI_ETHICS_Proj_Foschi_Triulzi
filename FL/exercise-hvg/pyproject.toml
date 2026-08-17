@@ -51,10 +51,10 @@ top2k_genes_file = "top2k_genes.json"
 # Docs: https://flower.ai/docs/framework/ref-flower-configuration.html
 #######################################################################
 
-# [tool.flwr.federations]
-# default = "local-simulation"
-# [tool.flwr.federations.local-simulation]
-# options.num-supernodes = 7  # Number of clients in the simulation
+[tool.flwr.federations]
+default = "local-simulation"
+[tool.flwr.federations.local-simulation]
+options.num-supernodes = 7  # Number of clients in the simulation
 
 # # These settings are for setting the live federated training done as a final exercise
 # [tool.flwr.federations.local-deployment]
