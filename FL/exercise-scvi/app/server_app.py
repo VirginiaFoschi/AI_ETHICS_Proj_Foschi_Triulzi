@@ -44,9 +44,9 @@ def _load_fairness_strategy(context: Context, num_rounds: int, model_file_path: 
         run_tag = f"qffl_q{str(fairness_q).replace('.', 'p')}"
 
     model_file_path = f"{model_file_path}_{run_tag}"
-    loss_plot_path = f"./fairness_results/models/{model_file_path}/{loss_plot_path}"
-    loss_numpy_path = f"./fairness_results/models/{model_file_path}/global_loss.npy"
-    fairness_log_dir = f"./fairness_results/models/{model_file_path}/"
+    loss_plot_path = f"./fairness_results/{model_file_path}/{loss_plot_path}"
+    loss_numpy_path = f"./fairness_results/{model_file_path}/global_loss.npy"
+    fairness_log_dir = f"./fairness_results/{model_file_path}/"
 
     on_final = make_on_final_arrays(
             model=scvi_model,
