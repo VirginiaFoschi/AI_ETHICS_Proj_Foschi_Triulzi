@@ -36,12 +36,18 @@ def _load_fairness_strategy(context: Context, num_rounds: int, model_file_path: 
     fairness_q_min = float(context.run_config.get("fairness_q_min", 0.0))
     fairness_q_max = float(context.run_config.get("fairness_q_max", 5.0))
 
-    # Namespace outputs by strategy_name (and, for qffl, by q too) so
-    # repeated runs with different settings don't overwrite each other's
-    # saved model / loss plot / fairness logs.
+    # "train_loss" (raw, backward compatible) or "train_loss_per_1k_counts"
+    # (library-size-normalized -- recommended when clients span heterogeneous
+    # sequencing protocols; see FedAvgQFFL docstring in fairness_strategy.py)
+    weight_metric = context.run_config.get("fairness_weight_metric", "train_loss")
+
+    # Namespace outputs by strategy_name (and, for qffl, by q, weight_metric,
+    # and seed) so repeated runs with different settings don't overwrite
+    # each other's saved model / loss plot / fairness logs.
     run_tag = fairness_strategy_name
     if fairness_strategy_name == "qffl":
-        run_tag = f"qffl_q{str(fairness_q).replace('.', 'p')}"
+        metric_tag = "" if weight_metric == "train_loss" else "norm"
+        run_tag = f"qffl_q{str(fairness_q).replace('.', 'p')}_{metric_tag}"
 
     model_file_path = f"{model_file_path}_{run_tag}"
     loss_plot_path = f"./fairness_results/{model_file_path}/{loss_plot_path}"
@@ -85,6 +91,7 @@ def _load_fairness_strategy(context: Context, num_rounds: int, model_file_path: 
         # q-Fair Federated Learning: reweight by (cached) client loss ** q
         strategy = FedAvgQFFL(
             q=fairness_q,
+            weight_metric=weight_metric,
             num_rounds=num_rounds,
             on_final_arrays=on_final,
             fraction_train=1.0,
@@ -104,6 +111,7 @@ def _load_fairness_strategy(context: Context, num_rounds: int, model_file_path: 
             alpha=fairness_q_alpha,
             q_min=fairness_q_min,
             q_max=fairness_q_max,
+            weight_metric=weight_metric,
             num_rounds=num_rounds,
             on_final_arrays=on_final,
             fraction_train=1.0,

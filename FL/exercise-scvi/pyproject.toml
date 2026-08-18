@@ -39,11 +39,12 @@ model_file_path = "model_federated"
 loss_plot_path = "loss_plot.png"
 
 strategy = "fairness" #"privacy"
-fairness_strategy_name = "fedavg_ploss" #"qffl/adaptive_qffl/uniform/fedavg_ploss"
-fairness_q = 1.0         # starting q
+fairness_strategy_name = "qffl" #"qffl/adaptive_qffl/uniform/fedavg_ploss"
+fairness_q = 5.0         # starting q
 fairness_q_alpha = 0.5   # step size — how aggressively q reacts each round
 fairness_q_min = 0.0      # floor: never goes below plain-FedAvg-like weighting
 fairness_q_max = 5.0      # ceiling: cap on how aggressive q can get
+fairness_weight_metric = "train_loss_per_1k_counts"  # "train_loss_per_1k_counts" (raw) or "train_loss_per_1k_counts" (library-size-normalized)
 
 # Model architecture parameters
 use_layer_norm = "both" 

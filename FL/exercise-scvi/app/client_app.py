@@ -16,7 +16,7 @@ from flwr.clientapp import ClientApp
 from app.task import (
     create_scvi_model,
     get_architecture,
-    get_loss,
+    get_loss_metrics,
     get_weights,
     load_local_data_simulation,
     read_json,
@@ -49,7 +49,6 @@ def _load_client_state(context: Context):
     4. Build a local SCVI model
     """
 
-    # Flower assigns each client a partition id
     client_id = context.node_config["partition-id"]
 
     # Build client folder path using partition id
@@ -222,11 +221,20 @@ def evaluate(msg: Message, context: Context) -> Message:
     )
 
     # ---------------------------------------------------------
-    # Compute local losses
+    # Compute local losses (raw ELBO-based loss + library-size-normalized)
     # ---------------------------------------------------------
+    #
+    # Raw loss magnitude scales with sequencing depth (total counts/cell),
+    # which differs by ~100x between protocols (e.g. droplet-based clients
+    # vs. full-length/plate-based clients like Fluidigm C1 or SMARTer). The
+    # normalized loss (per 1k counts) is comparable across clients regardless
+    # of protocol, and should be preferred as the fairness signal.
 
-    train_loss = get_loss(scvi_model, adata_local_train)
-    valid_loss = get_loss(scvi_model, adata_local_valid)
+    train_metrics = get_loss_metrics(scvi_model, adata_local_train)
+    valid_metrics = get_loss_metrics(scvi_model, adata_local_valid)
+
+    train_loss = train_metrics["loss"]
+    valid_loss = valid_metrics["loss"]
 
     # Reply to server with metrics only
     content = RecordDict(
@@ -236,12 +244,21 @@ def evaluate(msg: Message, context: Context) -> Message:
                     # Used for weighted averaging
                     "num-examples": int(adata_local_valid.n_obs),
 
-                    # Local metrics
+                    # Raw (depth-sensitive) losses -- kept for backward
+                    # compatibility with existing strategies/plots
                     "train_loss": float(train_loss),
                     "valid_loss": float(valid_loss),
 
                     # Alias used by some strategies
                     "eval_loss": float(valid_loss),
+
+                    # Library-size-normalized losses -- preferred for
+                    # fairness comparisons across clients on different
+                    # sequencing protocols
+                    "train_loss_per_1k_counts": float(train_metrics["loss_per_1k_counts"]),
+                    "valid_loss_per_1k_counts": float(valid_metrics["loss_per_1k_counts"]),
+                    "train_mean_library_size": float(train_metrics["mean_library_size"]),
+                    "valid_mean_library_size": float(valid_metrics["mean_library_size"]),
 
                     # Useful for debugging
                     "client_id": int(client_id),
