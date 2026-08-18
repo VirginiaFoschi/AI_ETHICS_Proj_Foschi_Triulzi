@@ -1,0 +1,10 @@
+{"round": 1, "n_clients": 7, "mean_loss": 1989.7137363978795, "variance": 3713455.4402048215, "worst_client_loss": 6126.09912109375, "best_client_loss": 675.8046264648438, "jain_index": 0.5159992176147256}
+{"round": 2, "n_clients": 7, "mean_loss": 1855.4781406947545, "variance": 2683313.817950496, "worst_client_loss": 5368.517578125, "best_client_loss": 705.2412719726562, "jain_index": 0.5619875375319157}
+{"round": 3, "n_clients": 7, "mean_loss": 1809.74711390904, "variance": 2350109.3980574454, "worst_client_loss": 5107.48779296875, "best_client_loss": 728.8798828125, "jain_index": 0.5822246104722029}
+{"round": 4, "n_clients": 7, "mean_loss": 1761.3202863420759, "variance": 2211994.779697426, "worst_client_loss": 4951.033203125, "best_client_loss": 712.500732421875, "jain_index": 0.5837611505022171}
+{"round": 5, "n_clients": 7, "mean_loss": 1731.3758980887276, "variance": 2148873.845533461, "worst_client_loss": 4870.8349609375, "best_client_loss": 698.0958251953125, "jain_index": 0.5824621257757311}
+{"round": 6, "n_clients": 7, "mean_loss": 1713.842250279018, "variance": 2100688.928348747, "worst_client_loss": 4813.24755859375, "best_client_loss": 691.2708740234375, "jain_index": 0.5830265579975865}
+{"round": 7, "n_clients": 7, "mean_loss": 1700.0354614257812, "variance": 2056098.941983504, "worst_client_loss": 4763.15771484375, "best_client_loss": 688.6782836914062, "jain_index": 0.5843089986284774}
+{"round": 8, "n_clients": 7, "mean_loss": 1691.2580043247767, "variance": 2033012.4361688446, "worst_client_loss": 4731.61279296875, "best_client_loss": 684.5775146484375, "jain_index": 0.5845370230451046}
+{"round": 9, "n_clients": 7, "mean_loss": 1679.3027082170759, "variance": 2010877.7205643677, "worst_client_loss": 4695.99072265625, "best_client_loss": 676.7457885742188, "jain_index": 0.5837498138497722}
+{"round": 10, "n_clients": 7, "mean_loss": 1670.5433785574776, "variance": 1980593.255318317, "worst_client_loss": 4659.880859375, "best_client_loss": 673.5682983398438, "jain_index": 0.5848951535377542}

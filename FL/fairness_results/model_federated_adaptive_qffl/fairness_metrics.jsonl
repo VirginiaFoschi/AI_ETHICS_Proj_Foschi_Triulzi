@@ -1,0 +1,10 @@
+{"round": 1, "n_clients": 7, "mean_loss": 1904.351309640067, "variance": 3282226.6035607816, "worst_client_loss": 5764.115234375, "best_client_loss": 653.2457275390625, "jain_index": 0.5249195430557458}
+{"round": 2, "n_clients": 7, "mean_loss": 1771.565438406808, "variance": 2848539.534953498, "worst_client_loss": 5381.5244140625, "best_client_loss": 611.2782592773438, "jain_index": 0.5242112376746475}
+{"round": 3, "n_clients": 7, "mean_loss": 1718.3800223214287, "variance": 2639348.4680749327, "worst_client_loss": 5198.3134765625, "best_client_loss": 599.6607666015625, "jain_index": 0.5280285617109135}
+{"round": 4, "n_clients": 7, "mean_loss": 1688.089608328683, "variance": 2536257.0127733313, "worst_client_loss": 5103.6435546875, "best_client_loss": 591.9871215820312, "jain_index": 0.5290934947806396}
+{"round": 5, "n_clients": 7, "mean_loss": 1670.6643327985491, "variance": 2486935.8050235226, "worst_client_loss": 5052.6162109375, "best_client_loss": 585.116943359375, "jain_index": 0.5288158707200297}
+{"round": 6, "n_clients": 7, "mean_loss": 1658.3729509626116, "variance": 2433740.5285233, "worst_client_loss": 4999.95849609375, "best_client_loss": 582.7966918945312, "jain_index": 0.5305231380131841}
+{"round": 7, "n_clients": 7, "mean_loss": 1650.0834350585938, "variance": 2418409.1962827733, "worst_client_loss": 4982.37841796875, "best_client_loss": 578.3668823242188, "jain_index": 0.5296007801380045}
+{"round": 8, "n_clients": 7, "mean_loss": 1644.0413295200892, "variance": 2378633.5729595833, "worst_client_loss": 4944.36669921875, "best_client_loss": 579.3998413085938, "jain_index": 0.5319037657611289}
+{"round": 9, "n_clients": 7, "mean_loss": 1636.5479997907366, "variance": 2358680.4785896204, "worst_client_loss": 4923.41796875, "best_client_loss": 575.97119140625, "jain_index": 0.5317263044597579}
+{"round": 10, "n_clients": 7, "mean_loss": 1630.2605678013392, "variance": 2331651.529580385, "worst_client_loss": 4896.5732421875, "best_client_loss": 574.2318725585938, "jain_index": 0.5326790717139339}

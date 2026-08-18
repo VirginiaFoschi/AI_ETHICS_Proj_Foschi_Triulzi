@@ -1,0 +1,10 @@
+{"round": 1, "n_clients": 7, "mean_loss": 2005.6410609654017, "variance": 3245909.7646001806, "worst_client_loss": 5834.982421875, "best_client_loss": 741.5994262695312, "jain_index": 0.5534281954911062}
+{"round": 2, "n_clients": 7, "mean_loss": 1874.57954624721, "variance": 3289716.2097321353, "worst_client_loss": 5766.056640625, "best_client_loss": 624.8839111328125, "jain_index": 0.516485892433405}
+{"round": 3, "n_clients": 7, "mean_loss": 1797.5448521205358, "variance": 3119136.859312776, "worst_client_loss": 5584.111328125, "best_client_loss": 584.3194580078125, "jain_index": 0.5088208871429435}
+{"round": 4, "n_clients": 7, "mean_loss": 1738.2684936523438, "variance": 2883657.30984256, "worst_client_loss": 5360.61181640625, "best_client_loss": 566.4447631835938, "jain_index": 0.5116777786138648}
+{"round": 5, "n_clients": 7, "mean_loss": 1706.9182390485491, "variance": 2763552.3273897725, "worst_client_loss": 5243.994140625, "best_client_loss": 557.5152587890625, "jain_index": 0.5132124641732261}
+{"round": 6, "n_clients": 7, "mean_loss": 1692.1629028320312, "variance": 2712766.0351121225, "worst_client_loss": 5191.890625, "best_client_loss": 553.1590576171875, "jain_index": 0.5135082815490506}
+{"round": 7, "n_clients": 7, "mean_loss": 1680.848868233817, "variance": 2665599.7630924336, "worst_client_loss": 5143.48583984375, "best_client_loss": 549.7455444335938, "jain_index": 0.5145381021880988}
+{"round": 8, "n_clients": 7, "mean_loss": 1673.4849591936384, "variance": 2634283.227668374, "worst_client_loss": 5115.986328125, "best_client_loss": 548.3810424804688, "jain_index": 0.5152965708074518}
+{"round": 9, "n_clients": 7, "mean_loss": 1662.6105085100446, "variance": 2590222.04531257, "worst_client_loss": 5073.73828125, "best_client_loss": 547.4314575195312, "jain_index": 0.5162528523577642}
+{"round": 10, "n_clients": 7, "mean_loss": 1656.9067993164062, "variance": 2568527.1781316507, "worst_client_loss": 5052.29541015625, "best_client_loss": 545.1843872070312, "jain_index": 0.5166369381139837}
