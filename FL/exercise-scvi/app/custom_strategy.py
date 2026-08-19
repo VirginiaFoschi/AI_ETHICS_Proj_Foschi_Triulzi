@@ -1,6 +1,6 @@
 """Custom FedAvg strategies for FedSCVI using the Flower Message API.
 
-The three classes below, all inheriting from FedAvg, are intentionally organized
+The four classes below, all inheriting from FedAvg, are intentionally organized
 as a progression:
 
 1. FedAvgSaveModel
@@ -10,7 +10,10 @@ as a progression:
    Tracks both train and validation losses and plots them.
 
 3. FedAvgSaveModelPlotLossesEarlyStopping
-   Extends Strategy 3 by adding early stopping based on validation loss.
+   Extends Strategy 2 by adding early stopping based on validation loss.
+
+4. FedAvgSaveClientUpdates
+   Extends strategy 3 by saving individual client weight updates before performing standard server-side aggregation
 
 All four strategies override the same two Flower hooks:
 
@@ -368,36 +371,6 @@ class FedAvgSaveModelPlotLossesEarlyStopping(FedAvgSaveModelPlotLosses):
                 )
 
         return aggregated_metrics
-
-
-# class FedAvgSaveClientUpdates(FedAvgSaveModelPlotLosses):
-#     def __init__(self, *, updates_save_dir="./client_updates", **kwargs):
-#         super().__init__(**kwargs)
-#         self.updates_save_dir = updates_save_dir
-#         os.makedirs(self.updates_save_dir, exist_ok=True)
-
-#     def aggregate_train(self, server_round, replies):
-#         for reply_msg in replies:
-#             if not reply_msg.has_content():
-#                 continue
-
-#             arrays = reply_msg.content.get("arrays")
-#             metrics = reply_msg.content.get("metrics")
-
-#             if arrays is None or metrics is None:
-#                 continue
-
-#             client_id = int(metrics["client_id"])
-#             num_examples = int(metrics["num-examples"])
-#             weights = arrays.to_numpy_ndarrays()
-
-#             np.savez(
-#                 f"{self.updates_save_dir}/round{server_round}_client{client_id}.npz",
-#                 *weights,
-#                 num_examples=num_examples, 
-#             )
-
-#         return super().aggregate_train(server_round, replies)
 
 # -----------------------------------------------------------------------------------------------------------------
 # Strategy 4: Strategy 3 + save individual client weight updates before performing standard server-side aggregation
