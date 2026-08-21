@@ -1,0 +1,10 @@
+{"round": 1, "n_clients": 7, "mean_loss": 1958.0430995396205, "variance": 3554232.6468266, "worst_client_loss": 5995.36376953125, "best_client_loss": 662.9904174804688, "jain_index": 0.5189289300308301}
+{"round": 2, "n_clients": 7, "mean_loss": 1839.0564749581474, "variance": 2637665.5624716943, "worst_client_loss": 5311.0537109375, "best_client_loss": 698.2107543945312, "jain_index": 0.5618346010608926}
+{"round": 3, "n_clients": 7, "mean_loss": 1773.0972638811384, "variance": 2312755.740821599, "worst_client_loss": 5033.087890625, "best_client_loss": 701.711181640625, "jain_index": 0.5761567322665139}
+{"round": 4, "n_clients": 7, "mean_loss": 1747.2096644810267, "variance": 2155925.017435919, "worst_client_loss": 4892.517578125, "best_client_loss": 709.4732666015625, "jain_index": 0.5860888839776209}
+{"round": 5, "n_clients": 7, "mean_loss": 1723.9022652762276, "variance": 2108183.6374576543, "worst_client_loss": 4829.029296875, "best_client_loss": 699.1769409179688, "jain_index": 0.5850050719223475}
+{"round": 6, "n_clients": 7, "mean_loss": 1740.0730590820312, "variance": 2963878.589440763, "worst_client_loss": 5411.36962890625, "best_client_loss": 563.1499633789062, "jain_index": 0.5053386610523706}
+{"round": 7, "n_clients": 7, "mean_loss": 1673.7323172433037, "variance": 2175568.962045464, "worst_client_loss": 4813.8056640625, "best_client_loss": 639.0106811523438, "jain_index": 0.5628709404984032}
+{"round": 8, "n_clients": 7, "mean_loss": 1661.9731619698662, "variance": 2104154.1515267855, "worst_client_loss": 4747.10205078125, "best_client_loss": 642.004150390625, "jain_index": 0.5676077749417457}
+{"round": 9, "n_clients": 7, "mean_loss": 1659.118416922433, "variance": 2036668.8861982303, "worst_client_loss": 4691.140625, "best_client_loss": 655.6477661132812, "jain_index": 0.5747498210027211}
+{"round": 10, "n_clients": 7, "mean_loss": 1663.416748046875, "variance": 1964724.244459396, "worst_client_loss": 4640.12646484375, "best_client_loss": 673.03271484375, "jain_index": 0.5847723339534457}

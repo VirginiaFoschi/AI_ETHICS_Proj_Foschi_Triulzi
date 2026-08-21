@@ -7,7 +7,7 @@ from flwr.serverapp import Grid, ServerApp
 from flwr.serverapp.strategy import FedAvg
 from app.fairness.fairness_strategy import (
     FedAvgAdaptiveQFFL, FedAvgQFFL, FedAvgUniform)
-
+from app.fairness.availability_strategy import FedAvgQFFLAvailability
 from app.custom_strategy import (
     FedAvgSaveModel,
     FedAvgSaveModelPlotLosses,
@@ -37,18 +37,12 @@ def _load_fairness_strategy(context: Context, num_rounds: int, model_file_path: 
     fairness_q_min = float(context.run_config.get("fairness_q_min", 0.0))
     fairness_q_max = float(context.run_config.get("fairness_q_max", 5.0))
 
-    # "train_loss" (raw, backward compatible) or "train_loss_per_1k_counts"
-    # (library-size-normalized -- recommended when clients span heterogeneous
-    # sequencing protocols; see FedAvgQFFL docstring in fairness_strategy.py)
-    weight_metric = context.run_config.get("fairness_weight_metric", "train_loss")
-
     # Namespace outputs by strategy_name (and, for qffl, by q, weight_metric,
     # and seed) so repeated runs with different settings don't overwrite
     # each other's saved model / loss plot / fairness logs.
     run_tag = fairness_strategy_name
     if fairness_strategy_name == "qffl":
-        metric_tag = "" if weight_metric == "train_loss" else "norm"
-        run_tag = f"qffl_q{str(fairness_q).replace('.', 'p')}_{metric_tag}"
+        run_tag = f"qffl_q{str(fairness_q).replace('.', 'p')}"
 
     model_file_path = f"{model_file_path}_{run_tag}"
     loss_plot_path = f"./fairness_results/{model_file_path}/{loss_plot_path}"
@@ -92,7 +86,6 @@ def _load_fairness_strategy(context: Context, num_rounds: int, model_file_path: 
         # q-Fair Federated Learning: reweight by (cached) client loss ** q
         strategy = FedAvgQFFL(
             q=fairness_q,
-            weight_metric=weight_metric,
             num_rounds=num_rounds,
             on_final_arrays=on_final,
             fraction_train=1.0,
@@ -112,7 +105,6 @@ def _load_fairness_strategy(context: Context, num_rounds: int, model_file_path: 
             alpha=fairness_q_alpha,
             q_min=fairness_q_min,
             q_max=fairness_q_max,
-            weight_metric=weight_metric,
             num_rounds=num_rounds,
             on_final_arrays=on_final,
             fraction_train=1.0,
@@ -129,6 +121,57 @@ def _load_fairness_strategy(context: Context, num_rounds: int, model_file_path: 
             f"Unknown strategy_name: {fairness_strategy_name!r}. "
             "Expected one of: 'fedavg_ploss', 'uniform', 'qffl', 'adaptive_qffl', 'early_stopping'."
         )
+
+    return strategy
+
+
+def _load_availability_strategy(context: Context, num_rounds: int, model_file_path: str, loss_plot_path: str, scvi_model):
+    participation_regime = context.run_config.get("participation_regime", "full")
+    availability_q = float(context.run_config.get("availability_q", 0.0))
+    availability_p = float(context.run_config.get("availability_p", 0.7))
+    availability_size_threshold = int(context.run_config.get("availability_size_threshold", 800))
+    availability_p_small = float(context.run_config.get("availability_p_small", 0.5))
+    availability_p_large = float(context.run_config.get("availability_p_large", 0.9))
+    availability_seed = int(context.run_config.get("availability_seed", 42))
+    availability_bootstrap_rounds = int(context.run_config.get("availability_bootstrap_rounds", 1))
+
+    # Namespace outputs by regime + q so the grid of runs doesn't collide.
+    q_tag = f"q{str(availability_q).replace('.', 'p')}"
+    run_tag = f"avail_{participation_regime}_{q_tag}"
+
+    model_file_path = f"{model_file_path}_{run_tag}"
+    loss_plot_path = f"./pp_results/{model_file_path}/{loss_plot_path}"
+    loss_numpy_path = f"./pp_results/{model_file_path}/global_loss.npy"
+    fairness_log_dir = f"./pp_results/{model_file_path}/"
+    participation_log_path = f"{fairness_log_dir}/participation_log.csv"
+
+    on_final = make_on_final_arrays(
+        model=scvi_model,
+        set_weights=set_weights,
+        save_path=fairness_log_dir,
+    )
+
+    strategy = FedAvgQFFLAvailability(
+        q=availability_q,
+        participation_regime=participation_regime,
+        p_available=availability_p,
+        size_threshold=availability_size_threshold,
+        p_small=availability_p_small,
+        p_large=availability_p_large,
+        availability_seed=availability_seed,
+        bootstrap_rounds=availability_bootstrap_rounds,
+        participation_log_path=participation_log_path,
+        num_rounds=num_rounds,
+        on_final_arrays=on_final,
+        fraction_train=1.0,
+        fraction_evaluate=1.0,
+        weighted_by_key="num-examples",
+        loss_history_path=None,
+        loss_numpy_path=loss_numpy_path,
+        loss_plot_path=loss_plot_path,
+        fairness_log_dir=fairness_log_dir,
+        fairness_log_tag=run_tag,
+    )
 
     return strategy
 
@@ -198,6 +241,8 @@ def main(grid: Grid, context: Context) -> None:
         )
     elif strategy_name == "fairness":
         strategy = _load_fairness_strategy(context, num_rounds, model_file_path, loss_plot_path, scvi_model)
+    elif strategy_name == "availability":
+        strategy = _load_availability_strategy(context, num_rounds, model_file_path, loss_plot_path, scvi_model)
     else:
         # Strategy 0: plain FedAvg
         #   - trains federated model

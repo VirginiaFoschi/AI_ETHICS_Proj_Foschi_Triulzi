@@ -18,7 +18,6 @@ from typing import Any, Union
 
 import json
 import os
-import random
 import anndata
 import numpy as np
 import pandas as pd
@@ -308,59 +307,6 @@ def get_loss(model, adata: anndata.AnnData) -> float:
     """
     elbo = model.get_elbo(adata)
     return -float(elbo)
-
-
-def get_mean_library_size(adata: anndata.AnnData, layer: str = "counts") -> float:
-    """
-    Mean total UMI/read count per cell for an AnnData object.
-
-    Used to normalize the raw ELBO-based loss, since scVI's reconstruction
-    term is computed on raw counts and its magnitude scales with sequencing
-    depth. Clients on full-length/plate-based protocols (e.g. Fluidigm C1,
-    SMARTer) can have library sizes ~100x larger than droplet-based clients
-    (e.g. inDrop, CEL-seq), which inflates their raw loss independent of how
-    well the model actually fits them.
-
-    Parameters
-    ----------
-    adata : anndata.AnnData
-        AnnData object to compute library sizes for.
-    layer : str
-        Layer holding raw counts. Falls back to `.X` if not present.
-
-    Returns
-    -------
-    float
-        Mean total counts per cell.
-    """
-    X = adata.layers[layer] if layer in adata.layers else adata.X
-    total_counts = np.asarray(X.sum(axis=1)).ravel()
-    return float(total_counts.mean()) if total_counts.size else 0.0
-
-
-def get_loss_metrics(
-    model, adata: anndata.AnnData, layer: str = "counts", eps: float = 1e-8
-) -> dict:
-    """
-    Compute both the raw loss and a library-size-normalized loss.
-
-    The normalized value (loss per 1,000 counts) puts clients on comparable
-    protocols/depths on a common scale, so per-client "fairness" comparisons
-    aren't dominated by sequencing-depth differences rather than actual model
-    fit quality.
-
-    Returns
-    -------
-    dict with keys: "loss", "mean_library_size", "loss_per_1k_counts"
-    """
-    raw_loss = get_loss(model, adata)
-    mean_lib_size = get_mean_library_size(adata, layer=layer)
-    normalized_loss = raw_loss / ((mean_lib_size / 1000.0) + eps)
-    return {
-        "loss": raw_loss,
-        "mean_library_size": mean_lib_size,
-        "loss_per_1k_counts": normalized_loss,
-    }
 
 
 # ============================================================

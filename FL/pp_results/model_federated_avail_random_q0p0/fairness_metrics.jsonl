@@ -1,0 +1,10 @@
+{"round": 1, "n_clients": 7, "mean_loss": 1992.707763671875, "variance": 3512129.6313322345, "worst_client_loss": 5998.12939453125, "best_client_loss": 697.443603515625, "jain_index": 0.5306530636239221}
+{"round": 2, "n_clients": 7, "mean_loss": 1979.8748517717634, "variance": 4279506.018155857, "worst_client_loss": 6471.4189453125, "best_client_loss": 590.7496337890625, "jain_index": 0.4780714972247524}
+{"round": 3, "n_clients": 7, "mean_loss": 1829.7499738420759, "variance": 3448587.8230465255, "worst_client_loss": 5806.01708984375, "best_client_loss": 560.7784423828125, "jain_index": 0.4925990010419584}
+{"round": 4, "n_clients": 7, "mean_loss": 1818.4135131835938, "variance": 3422082.70101021, "worst_client_loss": 5778.92822265625, "best_client_loss": 549.8460083007812, "jain_index": 0.4914207188958819}
+{"round": 5, "n_clients": 7, "mean_loss": 1739.56254359654, "variance": 2996491.3657272337, "worst_client_loss": 5432.353515625, "best_client_loss": 542.6527099609375, "jain_index": 0.5024563003205962}
+{"round": 6, "n_clients": 7, "mean_loss": 1721.637486049107, "variance": 2886546.2473111385, "worst_client_loss": 5316.73095703125, "best_client_loss": 553.8382568359375, "jain_index": 0.5066223657440152}
+{"round": 7, "n_clients": 7, "mean_loss": 1727.0099487304688, "variance": 2947345.3731566817, "worst_client_loss": 5350.7177734375, "best_client_loss": 531.9320678710938, "jain_index": 0.5029695220807122}
+{"round": 8, "n_clients": 7, "mean_loss": 1722.2794712611608, "variance": 2950112.276746417, "worst_client_loss": 5363.89892578125, "best_client_loss": 535.6533813476562, "jain_index": 0.5013635329414343}
+{"round": 9, "n_clients": 7, "mean_loss": 1733.521981375558, "variance": 2992092.0133660533, "worst_client_loss": 5407.8017578125, "best_client_loss": 537.1222534179688, "jain_index": 0.5010843783104888}
+{"round": 10, "n_clients": 7, "mean_loss": 1720.191615513393, "variance": 2906878.948104328, "worst_client_loss": 5351.86572265625, "best_client_loss": 538.4761962890625, "jain_index": 0.5044477323757455}
