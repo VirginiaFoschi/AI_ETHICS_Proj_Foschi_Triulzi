@@ -32,14 +32,6 @@ from app.custom_strategy import FedAvgSaveModelPlotLosses
 def fairness_metrics(client_losses: Dict[int, float]) -> dict:
     """Jain's fairness index (1 = perfectly equal loss across clients,
     1/N = maximally unequal), plus variance / worst / best client loss.
-
-    NOTE: Jain's index (and worst/best client loss) are only meaningful as a
-    *fairness* signal if `client_losses` values are on a comparable scale
-    across clients. Raw scVI ELBO loss is NOT comparable across clients on
-    different sequencing protocols, since its magnitude scales with library
-    size (total counts/cell) -- see get_loss_metrics() in task.py. Prefer
-    passing library-size-normalized losses (e.g. loss_per_1k_counts) here
-    when comparing fairness across heterogeneous clients.
     """
     losses = np.array(list(client_losses.values()), dtype=float)
     n = len(losses)
@@ -98,16 +90,13 @@ class _FairnessLoggingMixin:
                     "round",
                     "client_id",
                     "num_examples",
-                    "valid_loss",
-                    "valid_loss_per_1k_counts",
-                    "valid_mean_library_size",
+                    "valid_loss"
                 ]
             )
         open(self._fair_jsonl_path, "w").close()
 
     def _log_fairness(self, server_round: int, replies) -> None:
-        client_losses_raw: Dict[int, float] = {}
-        client_losses_norm: Dict[int, float] = {}
+        client_losses: Dict[int, float] = {}
 
         with open(self._fair_csv_path, "a", newline="") as f:
             writer = csv.writer(f)
@@ -133,44 +122,23 @@ class _FairnessLoggingMixin:
                     except (KeyError, TypeError):
                         continue
 
-                # Normalized loss may be absent if running against an older
-                # client_app.py that hasn't been updated yet -- log NaN
-                # rather than dropping the row.
-                try:
-                    valid_loss_norm = float(msg_metrics["valid_loss_per_1k_counts"])
-                except (KeyError, TypeError):
-                    valid_loss_norm = float("nan")
-
-                try:
-                    valid_lib_size = float(msg_metrics["valid_mean_library_size"])
-                except (KeyError, TypeError):
-                    valid_lib_size = float("nan")
-
                 try:
                     client_id = int(msg_metrics["client_id"])
                 except (KeyError, TypeError):
                     client_id = None
 
                 writer.writerow(
-                    [server_round, client_id, n_i, valid_loss, valid_loss_norm, valid_lib_size]
+                    [server_round, client_id, n_i, valid_loss]
                 )
                 if client_id is not None:
-                    client_losses_raw[client_id] = valid_loss
-                    if not np.isnan(valid_loss_norm):
-                        client_losses_norm[client_id] = valid_loss_norm
+                    client_losses[client_id] = valid_loss
 
-        if client_losses_raw:
-            raw_metrics = {
-                f"raw_{k}": v for k, v in fairness_metrics(client_losses_raw).items()
-            }
-            norm_metrics = (
-                {f"norm_{k}": v for k, v in fairness_metrics(client_losses_norm).items()}
-                if client_losses_norm
-                else {}
-            )
+        if client_losses:
+            metrics = fairness_metrics(client_losses)
+            
             with open(self._fair_jsonl_path, "a") as f:
                 f.write(
-                    json.dumps({"round": server_round, **raw_metrics, **norm_metrics}) + "\n"
+                    json.dumps({"round": server_round, **metrics}) + "\n"
                 )
 
 
@@ -217,32 +185,20 @@ class FedAvgUniform(_FairnessLoggingMixin, FedAvgSaveModelPlotLosses):
 class FedAvgQFFL(_FairnessLoggingMixin, FedAvgSaveModelPlotLosses):
     """
     q-Fair Federated Learning (https://arxiv.org/abs/1905.10497).
-    weight_k = num_examples_k * (loss_k ** q)
+    weight_k = num_examples_k * (train_loss_k ** q)
 
-    loss_k is the client's *cached* loss from the previous round's
+    train_loss_k is the client's *cached* training loss from the previous round's
     evaluate() reply. q=0 -> weight_k =
     num_examples_k, i.e. identical to plain FedAvg weighting.
 
-    weight_metric selects which cached client loss drives the reweighting:
-      - "train_loss" (default, backward compatible): raw ELBO-based loss.
-        NOTE: its magnitude scales with sequencing depth, so this metric
-        will systematically overweight clients on high-depth protocols
-        (e.g. Fluidigm C1, SMARTer) for reasons unrelated to how well
-        they're actually being served.
-      - "train_loss_per_1k_counts": library-size-normalized loss. Prefer
-        this when clients span heterogeneous sequencing protocols, so
-        reweighting targets genuinely poorly-fit clients rather than
-        high-depth clients.
     """
 
     def __init__(self, *, q: float = 1.0, eps: float = 1e-8,
                  fairness_log_dir: str = ".", fairness_log_tag: str | None = None,
-                 weight_metric: str = "train_loss",
                  **kwargs):
         super().__init__(**kwargs)
         self.q = q
         self.eps = eps
-        self.weight_metric = weight_metric
         q_str = str(q).replace(".", "p")
         tag = fairness_log_tag or f"fedavgqffl_q{q_str}"
         self._init_fairness_logs(fairness_log_dir, tag=tag)
@@ -303,8 +259,7 @@ class FedAvgQFFL(_FairnessLoggingMixin, FedAvgSaveModelPlotLosses):
         aggregated_metrics = super().aggregate_evaluate(server_round, replies)
         self._log_fairness(server_round, replies)
 
-        # cache each client's chosen weighting metric for the *next*
-        # round's q-FFL weighting (see weight_metric docstring above)
+        # cache each client's train_loss for the next round
         for reply_msg in replies:
             if not reply_msg.has_content():
                 continue
@@ -313,8 +268,8 @@ class FedAvgQFFL(_FairnessLoggingMixin, FedAvgSaveModelPlotLosses):
                 continue
             try:
                 client_id = int(m["client_id"])
-                weight_value = float(m[self.weight_metric])
-                self._cached_train_loss[client_id] = weight_value
+                train_loss = float(m["train_loss"])
+                self._cached_train_loss[client_id] = train_loss
             except (KeyError, TypeError, ValueError):
                 continue
 
@@ -367,14 +322,7 @@ class FedAvgAdaptiveQFFL(FedAvgQFFL):
  
         # Recompute this round's Jain's index directly from client losses,
         # to decide how to adjust q for the NEXT round's aggregate_train.
-        # Uses the valid-side counterpart of self.weight_metric, so that
-        # when weighting by the normalized loss, the fairness signal
-        # driving q's adaptation is on the same (comparable) scale.
-        valid_metric_key = (
-            "valid_loss_per_1k_counts"
-            if self.weight_metric == "train_loss_per_1k_counts"
-            else "eval_loss"
-        )
+        
         client_losses: Dict[int, float] = {}
         for reply_msg in replies:
             if not reply_msg.has_content():
@@ -387,7 +335,7 @@ class FedAvgAdaptiveQFFL(FedAvgQFFL):
             except (KeyError, TypeError):
                 continue
             try:
-                loss = float(m[valid_metric_key])
+                loss = float(m["eval_loss"])
             except (KeyError, TypeError):
                 try:
                     loss = float(m["valid_loss"])

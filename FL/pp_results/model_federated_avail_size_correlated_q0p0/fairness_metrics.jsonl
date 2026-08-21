@@ -1,0 +1,10 @@
+{"round": 1, "n_clients": 7, "mean_loss": 1929.7012765066963, "variance": 3380087.5232667, "worst_client_loss": 5868.5908203125, "best_client_loss": 663.9400634765625, "jain_index": 0.5241883092404953}
+{"round": 2, "n_clients": 7, "mean_loss": 1854.36030796596, "variance": 3457763.4697659602, "worst_client_loss": 5848.4404296875, "best_client_loss": 584.18408203125, "jain_index": 0.498614402099933}
+{"round": 3, "n_clients": 7, "mean_loss": 1766.2236502511162, "variance": 3090096.246326835, "worst_client_loss": 5510.58935546875, "best_client_loss": 556.124267578125, "jain_index": 0.5023712909128525}
+{"round": 4, "n_clients": 7, "mean_loss": 1728.1958530970983, "variance": 2920698.991804862, "worst_client_loss": 5352.9599609375, "best_client_loss": 545.4907836914062, "jain_index": 0.5055830282893602}
+{"round": 5, "n_clients": 7, "mean_loss": 1684.6466587611608, "variance": 2698270.524725559, "worst_client_loss": 5167.80517578125, "best_client_loss": 540.7832641601562, "jain_index": 0.5126224840337203}
+{"round": 6, "n_clients": 7, "mean_loss": 1702.05366734096, "variance": 2817830.1031026742, "worst_client_loss": 5271.1103515625, "best_client_loss": 536.9913330078125, "jain_index": 0.5069255573993229}
+{"round": 7, "n_clients": 7, "mean_loss": 1702.5172293526787, "variance": 2845386.54441343, "worst_client_loss": 5291.14453125, "best_client_loss": 534.1105346679688, "jain_index": 0.5046290756627683}
+{"round": 8, "n_clients": 7, "mean_loss": 1687.8816441127233, "variance": 2768928.4324161718, "worst_client_loss": 5221.99951171875, "best_client_loss": 533.9559936523438, "jain_index": 0.5071215577380558}
+{"round": 9, "n_clients": 7, "mean_loss": 1695.6043003627233, "variance": 2797799.0163066564, "worst_client_loss": 5246.28564453125, "best_client_loss": 533.57275390625, "jain_index": 0.5068109164131346}
+{"round": 10, "n_clients": 7, "mean_loss": 1688.2961687360491, "variance": 2768923.0387763204, "worst_client_loss": 5223.83203125, "best_client_loss": 533.2821044921875, "jain_index": 0.5072447985392325}
