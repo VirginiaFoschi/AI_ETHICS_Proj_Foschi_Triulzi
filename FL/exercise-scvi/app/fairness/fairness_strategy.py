@@ -12,6 +12,9 @@ FedAvgQFFL
     aggregate_train ~ num_examples * (train_loss ** q). q = 0 reduces to
     plain num-examples weighting.
 
+FedAvgAdaptiveQFFL
+    Adaptive q-FFL, inspired by Pei (2025) F^3.
+
 Both classes subclass FedAvgSaveModelPlotLosses.
 """
 
@@ -71,10 +74,6 @@ def _weighted_average_arrays(
         )
         aggregated.append(weighted_sum / total_weight)
     return aggregated
-
-
-# Shared per-client fairness logging (CSV + JSONL), layered on top of
-# whatever aggregate_evaluate the parent class already does
 
 class _FairnessLoggingMixin:
     def _init_fairness_logs(self, fairness_log_dir: str, tag: str | None = None) -> None:
@@ -143,7 +142,6 @@ class _FairnessLoggingMixin:
 
 
 # Strategy 1: equal-weight (uniform) aggregation
-
 class FedAvgUniform(_FairnessLoggingMixin, FedAvgSaveModelPlotLosses):
     """Every client's array update counts the same in aggregate_train,
     regardless of num-examples. Fairness baseline #1."""

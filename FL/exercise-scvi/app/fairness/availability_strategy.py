@@ -1,56 +1,14 @@
-"""Client-availability simulation for FedSCVI.
-
-Real cross-institution FL deployments rarely see every client show up to
-every round (a lab's compute is busy, a connection drops, an IRB-gated
-node is offline that week, ...). This module adds that on top of the
-existing strategies (plain FedAvg-style weighting *or* q-FFL) without
-touching them: it is a mixin that only overrides ``configure_train``.
-
-Participation regimes
-----------------------
-"full"
-    Every connected client is asked to train every round (status quo).
-
-"random"
-    Each client is independently available each round with a fixed
-    probability ``p_available`` (e.g. 0.7), regardless of its size.
-    Same *expected* participation for everyone -> isolates the effect of
-    dropout itself from any size confound.
-
-"size_correlated"
-    Availability probability depends on the client's local training-set
+"""
+Participation regimes:
+-"full": Every connected client is asked to train every round
+-"random": Each client is independently available each round with a fixed
+    probability (p_available), regardless of its size
+-"size_correlated": Availability probability depends on the client's local training-set
     size: small clients (< ``size_threshold`` cells) are available with
     probability ``p_small``, larger clients with probability ``p_large``.
     This mimics smaller/under-resourced sites being less reliably online,
     and is meant to test whether it amplifies the size effect already
     observed with full participation.
-
-Why a mixin, not ``fraction_train``
-------------------------------------
-Flower's built-in ``fraction_train`` just changes *how many* of the
-currently-connected clients are uniformly sampled each round -- every
-client still has the same participation probability, and there is no way
-to make that probability depend on the client's identity/size. To get
-independent per-client Bernoulli availability (and size-correlated
-probabilities) we replace ``configure_train``'s node-selection logic
-instead of leaning on ``fraction_train``. ``fraction_train`` is left at
-its default (1.0) here and is not what drives dropout in this file.
-
-Mapping node_id -> client_id
-------------------------------
-Flower's Grid only gives you opaque ``node_id``s; it does not expose
-which data partition a node holds. We learn that mapping ourselves from
-the ``client_id`` (and ``num-examples``) every client already reports in
-its train/evaluate replies, and cache it. Because the mapping (and, for
-the size-correlated regime, each client's size) isn't known until at
-least one reply has come in, the first ``bootstrap_rounds`` round(s) are
-always run at full participation; dropout kicks in from there.
-
-Evaluation is intentionally left untouched (``configure_evaluate`` is not
-overridden): every client is still evaluated every round regardless of
-whether it trained, so per-round fairness metrics reflect the true
-global model quality for *all* clients, not just the ones that happened
-to be online.
 """
 
 from __future__ import annotations
@@ -68,15 +26,7 @@ from app.fairness.fairness_strategy import FedAvgQFFL
 
 
 class AvailabilityMixin:
-    """Overrides ``configure_train`` to apply per-round client dropout.
-
-    Must be mixed in *before* a FedAvg-derived class, e.g.::
-
-        class MyStrategy(AvailabilityMixin, FedAvgQFFL):
-            ...
-
-    and ``_init_availability(...)`` must be called (typically from
-    ``__init__``) before training starts.
+    """Overrides ``configure_train`` to apply per-round client dropout
     """
 
     def _init_availability(
@@ -107,8 +57,6 @@ class AvailabilityMixin:
 
         self._avail_rng = random.Random(availability_seed)
 
-        # Learned online from replies: real Flower node_id -> partition/client_id,
-        # and client_id -> (train) num-examples, used as the client's "size".
         self._node_to_client: Dict[int, int] = {}
         self._client_sizes: Dict[int, int] = {}
 
@@ -119,10 +67,6 @@ class AvailabilityMixin:
                 csv.writer(f).writerow(
                     ["round", "node_id", "client_id", "client_size", "available"]
                 )
-
-    # ------------------------------------------------------------------
-    # Learning the node_id <-> client_id map and client sizes from replies
-    # ------------------------------------------------------------------
 
     def _learn_from_replies(self, replies: Iterable) -> None:
         for reply_msg in replies:
@@ -148,10 +92,6 @@ class AvailabilityMixin:
                     self._client_sizes[client_id] = n_k
                 except (KeyError, TypeError, ValueError):
                     pass
-
-    # ------------------------------------------------------------------
-    # Availability model
-    # ------------------------------------------------------------------
 
     def _availability_prob(self, client_id: Optional[int]) -> float:
         if self.participation_regime == "full":
@@ -210,10 +150,6 @@ class AvailabilityMixin:
                     [server_round, node_id, client_id, size, availability.get(node_id, True)]
                 )
 
-    # ------------------------------------------------------------------
-    # Strategy hooks
-    # ------------------------------------------------------------------
-
     def configure_train(self, server_round, arrays, config, grid):
         """Same as FedAvg.configure_train, but node selection = availability
         draw instead of a uniform ``fraction_train`` sample."""
@@ -249,12 +185,7 @@ class AvailabilityMixin:
 
 class FedAvgQFFLAvailability(AvailabilityMixin, FedAvgQFFL):
     """q-FFL (q=0 == plain num-examples-weighted FedAvg) crossed with a
-    client-availability regime.
-
-    Using ``FedAvgQFFL`` as the base for *both* arms of the grid (q=0 and
-    q=5) -- rather than a separate plain-FedAvg class -- means both arms
-    get identical fairness logging (``fairness_log.csv`` /
-    ``fairness_metrics.jsonl``), so the two are directly comparable.
+    client-availability regime
     """
 
     def __init__(
