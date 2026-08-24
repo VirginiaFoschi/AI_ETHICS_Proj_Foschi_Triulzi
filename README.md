@@ -12,7 +12,7 @@ AI_ETHICS_Proj_Foschi_Triulzi/
     ├── data_centralized/          
     ├── data_federated/            
     ├── exercise-hvg/              
-    ├── exercise-scvi/            #directory containing the starting federated learning experiment extended with code for privacy, fairness and partial participation experiments
+    ├── exercise-scvi/            #directory containing the starting federated learning experiment extended with code for privacy and fairness experiments
     │   ├── app/
     │   │   ├── fairness/           
     │   │   ├── old/               
@@ -20,20 +20,21 @@ AI_ETHICS_Proj_Foschi_Triulzi/
     │   │   ├── client_app.py     
     │   │   ├── custom_strategy.py 
     │   │   ├── server_app.py      
-    │   │   └── task.py            
-    │   ├── fairness_analysis/     # Notebooks/scripts for the fairness experiments
-    │   ├── fairness_results/      # Precomputed fairness experiment outputs (models, logs)
-    │   ├── privacy_analysis/      # Notebooks/scripts for the privacy experiments
-    │   ├── pp_results/            # Precomputed partial-participation experiment outputs
-    │   ├── model_centralized/     
-    │   ├── model_federated/       
+    │   │   └── task.py
     │   ├── centralized_training.ipynb
     │   ├── models_comparison.ipynb
     │   ├── preliminaries.py       # Downloads/prepares datasets required for the experiments
-    │   ├── pyproject.toml         # Project config: dependencies + experiment parameters
-    │   ├── fl-course-env.yaml     # Conda environment specification
-    │   ├── fl-course-env-new.yaml # Updated Conda environment specification
-    │   └── loss_plot.png
+    │   └── pyproject.toml         # Project config: dependencies + experiment parameters           
+    ├── fairness_analysis/     # Notebooks/scripts for the fairness experiments
+    ├── fairness_results/      # Precomputed fairness experiment outputs (models, logs)
+    ├── privacy_analysis/      # Notebooks/scripts for the privacy experiments
+    ├── pp_results/            # Precomputed partial-participation experiment outputs
+    ├── model_centralized/     
+    ├── model_federated/       
+    ├── preliminaries.py       # Downloads/prepares datasets required for the experiments        
+    ├── fl-course-env.yaml     # Conda environment specification
+    ├── fl-course-env-new.yaml # Updated Conda environment specification
+    ├── loss_plot.png
     ├── .gitignore
     └── README.md
 ```
