@@ -1,6 +1,6 @@
 # Ethical Extensions to a Federated Learning Framework for Single-Cell RNA Sequencing
  
-This repository contains the implementation, experimental results, and report developed for the Ethics in Artificial Intelligence course project, academic year 2025/2026.
+This repository contains the implementation, experimental results, and the final report for the Ethics in Artificial Intelligence course project, academic year 2025/2026.
 
 Authors: Foschi Virginia, Triulzi Giada
 
@@ -75,16 +75,15 @@ strategy = "availability"
  
 These correspond, respectively, to:
  
-- the **privacy** experiments (Differential Privacy and the Client
-  Identification Attack),
+- the **privacy** experiments (Client Identification Attack, Property Inference Attack and Differential Privacy),
 - the **client-fairness** experiments (comparison of aggregation
   strategies),
 - the **partial client participation** experiments (client dropout
   regimes).
   
 Additional fields in `exercise-scvi/pyproject.toml`, described in the
-sections below, control the specific configuration of whichever
-experiment is selected.
+sections below, control the specific configuration of the selected
+experiment.
 
 ## 3. Privacy experiments (`strategy = "privacy"`)
  
@@ -96,7 +95,7 @@ Before running these experiments, download the appropriate
   Privacy experiments with noise multipliers of `0.3` and `0.6`:
   https://drive.google.com/drive/folders/1mceP2WSYdzPZ1_d-4IFkVhOUaL7eYCZd?usp=share_link
 - The **second** link provides the updates required for the experiments
-  with a noise multiplier of `1`, and for **targeted** Differential
+  with a noise multiplier of `1` and for **targeted** Differential
   Privacy:
   https://drive.google.com/drive/folders/1Nh8gyXAbQMi1LuRLRVn_0xrcBqThbXET?usp=share_link
 
